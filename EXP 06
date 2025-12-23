@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 #define MAX 100
-
 struct Process {
     int pid;              
     int arrival_time;     
