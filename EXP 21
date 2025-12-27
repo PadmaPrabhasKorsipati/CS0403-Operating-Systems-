@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+int main() {
+    int fd;
+    char write_buf[] = "UNIX System Calls File Management";
+    char read_buf[100];
+
+    // Create and open file
+    fd = open("sample.txt", O_CREAT | O_WRONLY, 0644);
+
+    // Write to file
+    write(fd, write_buf, sizeof(write_buf));
+    close(fd);
+
+    // Open file for reading
+    fd = open("sample.txt", O_RDONLY);
+
+    // Read from file
+    read(fd, read_buf, sizeof(read_buf));
+
+    // Display content
+    printf("File Content: %s\n", read_buf);
+
+    close(fd);
+    return 0;
+}
