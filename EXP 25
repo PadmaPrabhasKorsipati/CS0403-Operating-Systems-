@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+void display_permissions(mode_t mode) {
+    printf( (S_ISDIR(mode)) ? "d" : "-" );
+    printf( (mode & S_IRUSR) ? "r" : "-" );
+    printf( (mode & S_IWUSR) ? "w" : "-" );
+    printf( (mode & S_IXUSR) ? "x" : "-" );
+    printf( (mode & S_IRGRP) ? "r" : "-" );
+    printf( (mode & S_IWGRP) ? "w" : "-" );
+    printf( (mode & S_IXGRP) ? "x" : "-" );
+    printf( (mode & S_IROTH) ? "r" : "-" );
+    printf( (mode & S_IWOTH) ? "w" : "-" );
+    printf( (mode & S_IXOTH) ? "x" : "-" );
+    printf("\n");
+}
+
+int main() {
+    struct stat fileStat;
+    int fd;
+
+    /* Create file */
+    fd = open("permission_demo.txt", O_CREAT | O_WRONLY, 0644);
+    write(fd, "Linux Permissions Demo", 22);
+    close(fd);
+
+    /* Display user information */
+    printf("User ID (Owner): %d\n", getuid());
+    printf("Group ID: %d\n\n", getgid());
+
+    /* Get file information */
+    stat("permission_demo.txt", &fileStat);
+
+    printf("Initial File Permissions: ");
+    display_permissions(fileStat.st_mode);
+
+    /* Change permissions */
+    chmod("permission_demo.txt", 0774);
+
+    /* Get updated permissions */
+    stat("permission_demo.txt", &fileStat);
+
+    printf("Updated File Permissions: ");
+    display_permissions(fileStat.st_mode);
+
+    return 0;
+}
