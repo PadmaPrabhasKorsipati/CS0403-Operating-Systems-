@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <unistd.h>
+
+int count = 0;
+pthread_mutex_t mutex;
+sem_t sem;
+
+/* Thread using Mutex */
+void* mutex_thread(void* arg) {
+    pthread_mutex_lock(&mutex);
+    count++;
+    printf("Mutex Thread: Count = %d\n", count);
+    pthread_mutex_unlock(&mutex);
+    pthread_exit(NULL);
+}
+
+/* Thread using Semaphore */
+void* semaphore_thread(void* arg) {
+    sem_wait(&sem);
+    printf("Semaphore Thread in critical section\n");
+    sleep(1);
+    sem_post(&sem);
+    pthread_exit(NULL);
+}
+
+/* Simple Thread */
+void* simple_thread(void* arg) {
+    printf("Simple Thread Executing\n");
+    pthread_exit(NULL);
+}
+
+int main() {
+    pthread_t t1, t2, t3;
+
+    /* Initialize mutex and semaphore */
+    pthread_mutex_init(&mutex, NULL);
+    sem_init(&sem, 0, 1);
+
+    /* Thread creation */
+    pthread_create(&t1, NULL, simple_thread, NULL);
+    pthread_create(&t2, NULL, mutex_thread, NULL);
+    pthread_create(&t3, NULL, semaphore_thread, NULL);
+
+    /* Thread join */
+    pthread_join(t1, NULL);
+    pthread_join(t2, NULL);
+    pthread_join(t3, NULL);
+
+    /* Destroy synchronization objects */
+    pthread_mutex_destroy(&mutex);
+    sem_destroy(&sem);
+
+    printf("All threads completed execution\n");
+    return 0;
+}
