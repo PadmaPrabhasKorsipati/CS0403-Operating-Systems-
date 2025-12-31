@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
+
+int main() {
+    int fd;
+    char write_data[] = "Hello, this is File Management using C.\n";
+    char append_data[] = "This line is appended to the file.\n";
+    char read_data[100];
+
+    // Create and write to file
+    fd = open("filedemo.txt", O_CREAT | O_WRONLY, 0644);
+    write(fd, write_data, strlen(write_data));
+    close(fd);
+
+    // Read from file
+    fd = open("filedemo.txt", O_RDONLY);
+    read(fd, read_data, sizeof(read_data));
+    printf("File Content:\n%s", read_data);
+    close(fd);
+
+    // Append to file
+    fd = open("filedemo.txt", O_APPEND | O_WRONLY);
+    write(fd, append_data, strlen(append_data));
+    close(fd);
+
+    // Delete file
+    unlink("filedemo.txt");
+    printf("\nFile deleted successfully.\n");
+
+    return 0;
+}
